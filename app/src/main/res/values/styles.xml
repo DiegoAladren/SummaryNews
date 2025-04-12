@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Overlay para AppBar (toolbar) -->
+    <style name="Theme.SummaryNews.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="colorControlNormal">@color/black</item> <!-- Para los iconos de menú -->
+    </style>
+
+    <!-- Overlay para el menú popup (⋮) -->
+    <style name="Theme.SummaryNews.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="colorControlNormal">@color/black</item> <!-- Para los íconos del menú emergente -->
+    </style>
+
+</resources>

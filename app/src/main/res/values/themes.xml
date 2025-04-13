@@ -14,10 +14,9 @@
         <!-- Estilo de la AppBar y nuevo -->
         <item name="actionBarTheme">@style/Theme.SummaryNews.AppBarOverlay</item>
 
-        <!-- Status bar color -->
+        <!-- Color de la status bar -->
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
-
         <!-- Otros -->
         <!-- <item name="android:textViewStyle">@color/text_color</item> -->
     </style>

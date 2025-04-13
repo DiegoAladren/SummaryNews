@@ -13,7 +13,8 @@
     <color  name="text_color">#454545</color>
     <color name="link_color">#3F51B5</color>
     <color name="card_background">#FFFFFFFF</color>
+    <color name="dark_AppBar">#282828</color>
 
-    <!-- Modo oscuro -->
+
     <color  name="text_color_Dark">#EFEEEE</color>
 </resources>

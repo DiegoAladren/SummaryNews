@@ -4,18 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/newsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:contentDescription="@string/app_name"
-        android:padding="8dp" />
+    tools:context=".ui.guardados.SlideshowFragment">
 
     <TextView
-        android:id="@+id/text_home"
+        android:id="@+id/text_slideshow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

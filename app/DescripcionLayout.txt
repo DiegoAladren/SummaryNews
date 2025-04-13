@@ -1,0 +1,24 @@
+Los archivos de Layout se dividen en varias categorías según lo que contienen:
+
+
+ACTIVITY_ → Archivos de Actividades
+¿Qué son?
+Layouts asociados a una Activity. Una Activity es como una pantalla completa de tu app (por ejemplo, el inicio, la pantalla de login, etc.).
+
+
+FRAGMENT_ → Archivos de Fragments
+¿Qué son?
+Layouts usados por un Fragment, que es una sección reutilizable dentro de una Activity. Piensa en un fragmento como una "mini-pantalla"
+que puedes meter o cambiar dentro de una pantalla principal.
+
+
+ITEM_ → Layouts de ítems (listas, tarjetas, etc.)
+¿Qué son?
+Layouts que representan una sola fila, tarjeta o ítem dentro de una lista o RecyclerView. No son pantallas completas, sino plantillas para ítems repetitivos.
+
+
+VIEW_ → Vistas reutilizables personalizadas
+¿Qué son?
+Layouts que representan componentes reutilizables, como un botón con estilo especial, un banner, un widget personalizado, etc.
+
+view_ (si se reutiliza) o layout_ (si es solo para esa activity)

@@ -37,8 +37,9 @@ class AdaptadorNoticias(private val newsList: List<Noticia>) : RecyclerView.Adap
         // Glide.with(holder.itemView.context).load(news.imageUrl).into(holder.image)
         holder.imagen.setImageResource(noticias.imagenID)
 
+        // Desde Aquí se controla la detección al darle like a una noticia.
         holder.btnLike.setOnClickListener {
-            val isLiked = it.tag as? Boolean ?: false
+            val isLiked = it.tag as? Boolean == true
             it.tag = !isLiked
 
             val imageButton = it as ImageButton
@@ -50,8 +51,9 @@ class AdaptadorNoticias(private val newsList: List<Noticia>) : RecyclerView.Adap
             }
         }
 
+        // Desde Aquí se controla la detección al guardar una noticia.
         holder.btnSave.setOnClickListener {
-            val isSaved = it.tag as? Boolean ?: false
+            val isSaved = it.tag as? Boolean == true
             it.tag = !isSaved
 
             val imageButton = it as ImageButton

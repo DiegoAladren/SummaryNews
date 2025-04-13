@@ -79,7 +79,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\User\Downloads\Logo Summary News.png" />
+                                                <entry key="imagePath" value="C:\Users\User\Downloads\Logo Summary News con Texto.png" />
                                                 <entry key="scalingPercent" value="91" />
                                               </map>
                                             </option>
@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="history" />
-                            <entry key="sourceFile" value="C:\Users\User\AndroidStudioProjects\SummaryNews\app\src\main\res\drawable\history.svg" />
+                            <entry key="outputName" value="home" />
+                            <entry key="sourceFile" value="C:\Users\User\AndroidStudioProjects\SummaryNews\app\src\main\res\drawable\home.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.summarynews.databinding.ActivityMainBinding
+import com.example.summarynews.ui.inicio.InicioFragment
 import com.google.android.material.tabs.TabLayout
 
 class MainActivity : AppCompatActivity() {
@@ -70,12 +71,28 @@ class MainActivity : AppCompatActivity() {
             if (destination.id == R.id.nav_home) {
                 tabLayout.visibility = View.VISIBLE
 
-                // Si no tiene ya pestañas, añadirlas
+                // Añadir pestañas solo si no se han añadido aún
                 if (tabLayout.tabCount == 0) {
-                    val categorias = listOf("Todo", "Política", "Deportes", "Tecnología", "Salud", "Economía", "Ciencia", "Cultura", "Opinión")
+                    val categorias = listOf("Todas", "Política", "Deportes", "Tecnología", "Salud", "Economía", "Ciencia", "Cultura", "Opinión")
                     for (categoria in categorias) {
                         tabLayout.addTab(tabLayout.newTab().setText(categoria))
                     }
+
+                    // Escuchar cuando el usuario selecciona una categoría
+                    tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                        override fun onTabSelected(tab: TabLayout.Tab) {
+                            val categoriaSeleccionada = tab.text.toString()
+
+                            // Buscar el fragment actual y llamar al método de filtrado
+                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                            if (currentFragment is InicioFragment) {
+                                currentFragment.filtrarPorCategoriaDesdeActivity(categoriaSeleccionada)
+                            }
+                        }
+
+                        override fun onTabUnselected(tab: TabLayout.Tab) {}
+                        override fun onTabReselected(tab: TabLayout.Tab) {}
+                    })
                 }
 
             } else {

@@ -12,4 +12,5 @@
     <string name="guardar">Guardar</string>
     <string name="me_gusta">Me gusta</string>
     <string name="enlace_fuente_original">Enlace fuente original</string>
+    <string name="no_hay_noticias">No hay noticias para esta categoría</string>
 </resources>

@@ -5,4 +5,5 @@ data class Noticia(
     val resumen: String,
     val imagenID: Int,
     val fuenteURL: String,
+    val categoria: String,
 )

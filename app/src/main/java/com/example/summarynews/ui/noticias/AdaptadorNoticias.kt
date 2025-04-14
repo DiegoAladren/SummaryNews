@@ -6,13 +6,15 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.example.summarynews.R
 import androidx.core.content.ContextCompat
 
 
-class AdaptadorNoticias(private val newsList: List<Noticia>) : RecyclerView.Adapter<AdaptadorNoticias.NoticiasViewHolder>() {
+class AdaptadorNoticias(
+    private val newsList: List<Noticia>,
+    private val onGuardarClicked: (Noticia) -> Unit
+) : RecyclerView.Adapter<AdaptadorNoticias.NoticiasViewHolder>() {
 
     class NoticiasViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titulo: TextView = itemView.findViewById(R.id.tvTitle)
@@ -32,36 +34,58 @@ class AdaptadorNoticias(private val newsList: List<Noticia>) : RecyclerView.Adap
         holder.titulo.text = noticias.titulo
         holder.resumen.text = noticias.resumen
 
-
-        // Puedes añadir clic para abrir la noticia en navegador
-        // Glide.with(holder.itemView.context).load(news.imageUrl).into(holder.image)
         holder.imagen.setImageResource(noticias.imagenID)
 
-        // Desde Aquí se controla la detección al darle like a una noticia.
-        holder.btnLike.setOnClickListener {
-            val isLiked = it.tag as? Boolean == true
-            it.tag = !isLiked
+        val context = holder.itemView.context
 
-            val imageButton = it as ImageButton
-            val context = holder.itemView.context
-            if (!isLiked) {
-                imageButton.setColorFilter(ContextCompat.getColor(context, R.color.red))
+        // Configurar el estado inicial del botón de Like
+        holder.btnLike.apply {
+            tag = noticias.liked // Establecer el tag inicial
+            if (noticias.liked) {
+                setImageResource(R.drawable.heart)
+                setColorFilter(ContextCompat.getColor(context, R.color.red))
             } else {
-                imageButton.setColorFilter(ContextCompat.getColor(context, R.color.gray))
+                setImageResource(R.drawable.heart_outline)
+                setColorFilter(ContextCompat.getColor(context, R.color.gray))
+            }
+            setOnClickListener {
+                val isLiked = noticias.liked
+                noticias.liked = !isLiked
+                val imageButton = it as ImageButton
+                if (!isLiked) {
+                    imageButton.setImageResource(R.drawable.heart)
+                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.red))
+                } else {
+                    imageButton.setImageResource(R.drawable.heart_outline)
+                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.gray))
+                }
+                // Aquí podrías llamar a una función para actualizar el estado "liked" de la noticia
+                // si lo estás gestionando fuera del Adapter.
             }
         }
 
-        // Desde Aquí se controla la detección al guardar una noticia.
-        holder.btnSave.setOnClickListener {
-            val isSaved = it.tag as? Boolean == true
-            it.tag = !isSaved
-
-            val imageButton = it as ImageButton
-            val context = holder.itemView.context
-            if (!isSaved) {
-                imageButton.setColorFilter(ContextCompat.getColor(context, R.color.blue))
+        // Configurar el estado inicial del botón de Guardar
+        holder.btnSave.apply {
+            if (noticias.saved) {
+                setImageResource(R.drawable.bookmark)
+                setColorFilter(ContextCompat.getColor(context, R.color.blue))
             } else {
-                imageButton.setColorFilter(ContextCompat.getColor(context, R.color.gray))
+                setImageResource(R.drawable.bookmark_outline)
+                setColorFilter(ContextCompat.getColor(context, R.color.gray))
+            }
+            // Acciones al hacer click en el botón guardar
+            setOnClickListener {
+                val isSaved = noticias.saved
+                noticias.saved = !isSaved
+                onGuardarClicked(noticias)
+                val imageButton = it as ImageButton
+                if (!isSaved) {
+                    imageButton.setImageResource(R.drawable.bookmark)
+                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.blue))
+                } else {
+                    imageButton.setImageResource(R.drawable.bookmark_outline)
+                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.gray))
+                }
             }
         }
     }

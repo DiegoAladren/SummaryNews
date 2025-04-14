@@ -95,6 +95,8 @@ class MainActivity : AppCompatActivity() {
                     })
                 }
 
+                // Fuerza la pestaña "Todas" cada vez que se entra al fragmento
+                tabLayout.getTabAt(0)?.select()
             } else {
                 tabLayout.visibility = View.GONE
             }

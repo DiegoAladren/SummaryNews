@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_inicio" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.summarynews.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_liked"
+        android:name="com.example.summarynews.ui.meGusta.MeGustaFragment"
+        android:label="@string/menu_liked"
+        tools:layout="@layout/fragment_megusta" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/nav_saved"
         android:name="com.example.summarynews.ui.guardados.GuardadosFragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_saved"
         tools:layout="@layout/fragment_guardados" />
 </navigation>

@@ -7,11 +7,14 @@
     <string name="action_settings">Ajustes</string>
 
     <string name="menu_home">Inicio</string>
-    <string name="menu_gallery">Galería</string>
-    <string name="menu_slideshow">Guardados</string>
+    <string name="menu_liked">Me gusta</string>
+    <string name="menu_saved">Guardados</string>
     <string name="guardar">Guardar</string>
     <string name="me_gusta">Me gusta</string>
     <string name="enlace_fuente_original">Enlace fuente original</string>
     <string name="no_hay_noticias">No hay noticias para esta categoría</string>
     <string name="no_hay_noticias_guardadas">No hay noticias guardadas</string>
+    <string name="resumen_general">Resumen General</string>
+    <string name="titulo_estadisticas">Tus Estadísticas de Likes</string>
+    <string name="likes_por_categoria">Likes por Categoría</string>
 </resources>

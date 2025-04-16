@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     //Inicialización de la barra superior
     private lateinit var appBarConfiguration: AppBarConfiguration
-    //Inicialización del binding para la actividad principal
+    //Inicialización del binding ( vinculador ) para la actividad principal
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,11 +54,11 @@ class MainActivity : AppCompatActivity() {
 
 
         // Se pasan los IDs de los destinos del menú como un conjunto,
-        // porque cada uno se debe considerar como una "pantalla principal" o destino de nivel superior.
+        // porque cada uno se debe considerar como una "pantalla principal".
         // De esta forma se le asignan cada uno de los IDs y el drawer layout para la configuración de la appBar.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_home, R.id.nav_liked, R.id.nav_saved
             ), drawerLayout
         )
         //Se configura la barra superior para que funcione con el controlador de navegación.
@@ -95,8 +95,7 @@ class MainActivity : AppCompatActivity() {
                     })
                 }
 
-                // Fuerza la pestaña "Todas" cada vez que se entra al fragmento
-                tabLayout.getTabAt(0)?.select()
+
             } else {
                 tabLayout.visibility = View.GONE
             }

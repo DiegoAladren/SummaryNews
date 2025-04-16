@@ -1,35 +1,41 @@
 package com.example.summarynews.ui.noticias
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.summarynews.ui.noticias.Noticia
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
+import com.example.summarynews.db.AppDatabase
+import com.example.summarynews.db.NoticiaEntity
+import kotlinx.coroutines.launch
 
-class NoticiasViewModel : ViewModel() {
+class NoticiasViewModel (application: Application) : AndroidViewModel(application) {
 
-    private val _noticias = MutableLiveData<List<Noticia>>(emptyList())
-    val noticias: LiveData<List<Noticia>> get() = _noticias
+    // Instancia del dao para acceder a la base de datos
+    private val dao = AppDatabase.getDatabase(application).noticiaDao()
 
-    fun setNoticias(lista: List<Noticia>) {
-        _noticias.value = lista
+
+    // LiveData que observa automáticamente los datos desde la base de datos
+    val noticias: LiveData<List<NoticiaEntity>> = liveData {
+        emitSource(dao.getTodasLive()) // Este método tiene que devolver LiveData desde el DAO
     }
 
-    fun getNoticias(): List<Noticia>? {
-        return _noticias.value
+    val guardadas: LiveData<List<NoticiaEntity>> = liveData {
+        emitSource(dao.getGuardadasLive()) // Este también
     }
 
-    fun actualizarNoticia(noticiaActualizada: Noticia) {
-        _noticias.value = _noticias.value?.map {
-            if (it.titulo == noticiaActualizada.titulo) noticiaActualizada else it
-        }
+    // Insertar noticias en la base de datos (por ejemplo tras obtenerlas desde la API)
+    fun insertarNoticias(noticias: List<NoticiaEntity>) = viewModelScope.launch {
+        dao.insertarNoticias(noticias)
     }
 
-    fun getGuardadas(): List<Noticia> {
-        return _noticias.value?.filter { it.saved } ?: emptyList()
+    // Actualizar una noticia (por ejemplo cuando el usuario da "guardar" o "like")
+    fun actualizarNoticia(noticia: NoticiaEntity) = viewModelScope.launch {
+        dao.actualizarNoticia(noticia)
     }
 
-    fun noticiasLength(): Int {
-
-        return _noticias.value?.size ?: 0
+    // Obtener el número de noticias actuales (forma suspendida)
+    suspend fun noticiasLength(): Int {
+        return dao.contarNoticias()
     }
 }

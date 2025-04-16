@@ -9,11 +9,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.summarynews.R
 import androidx.core.content.ContextCompat
-
+import com.example.summarynews.db.NoticiaEntity
 
 class AdaptadorNoticias(
-    private val newsList: List<Noticia>,
-    private val onGuardarClicked: (Noticia) -> Unit
+    private var newsList: List<NoticiaEntity>,
+    private val onLikeClicked: (NoticiaEntity) -> Unit,
+    private val onSaveClicked: (NoticiaEntity) -> Unit
 ) : RecyclerView.Adapter<AdaptadorNoticias.NoticiasViewHolder>() {
 
     class NoticiasViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,43 +31,43 @@ class AdaptadorNoticias(
     }
 
     override fun onBindViewHolder(holder: NoticiasViewHolder, position: Int) {
-        val noticias = newsList[position]
-        holder.titulo.text = noticias.titulo
-        holder.resumen.text = noticias.resumen
-
-        holder.imagen.setImageResource(noticias.imagenID)
+        val noticia = newsList[position]
+        holder.titulo.text = noticia.titulo
+        holder.resumen.text = noticia.resumen
+        holder.imagen.setImageResource(noticia.imagenID)
 
         val context = holder.itemView.context
 
         // Configurar el estado inicial del botón de Like
         holder.btnLike.apply {
-            tag = noticias.liked // Establecer el tag inicial
-            if (noticias.liked) {
+            tag = noticia.liked // Establecer el tag inicial
+            if (noticia.liked) {
                 setImageResource(R.drawable.heart)
                 setColorFilter(ContextCompat.getColor(context, R.color.red))
             } else {
                 setImageResource(R.drawable.heart_outline)
                 setColorFilter(ContextCompat.getColor(context, R.color.gray))
             }
+            // Detección de Like
             setOnClickListener {
-                val isLiked = noticias.liked
-                noticias.liked = !isLiked
-                val imageButton = it as ImageButton
+                val isLiked = noticia.liked
+                val nuevaNoticia = noticia.copy(liked = !isLiked)
+                onLikeClicked(nuevaNoticia)
+                // Actualizar la UI localmente sin recargar la lista completa
                 if (!isLiked) {
-                    imageButton.setImageResource(R.drawable.heart)
-                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.red))
+                    setImageResource(R.drawable.heart)
+                    setColorFilter(ContextCompat.getColor(context, R.color.red))
                 } else {
-                    imageButton.setImageResource(R.drawable.heart_outline)
-                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.gray))
+                    setImageResource(R.drawable.heart_outline)
+                    setColorFilter(ContextCompat.getColor(context, R.color.gray))
                 }
-                // Aquí podrías llamar a una función para actualizar el estado "liked" de la noticia
-                // si lo estás gestionando fuera del Adapter.
+                // No es necesario llamar a notifyItemChanged aquí porque LiveData actualizará la lista
             }
         }
 
         // Configurar el estado inicial del botón de Guardar
         holder.btnSave.apply {
-            if (noticias.saved) {
+            if (noticia.saved) {
                 setImageResource(R.drawable.bookmark)
                 setColorFilter(ContextCompat.getColor(context, R.color.blue))
             } else {
@@ -75,20 +76,28 @@ class AdaptadorNoticias(
             }
             // Acciones al hacer click en el botón guardar
             setOnClickListener {
-                val isSaved = noticias.saved
-                noticias.saved = !isSaved
-                onGuardarClicked(noticias)
-                val imageButton = it as ImageButton
+                val isSaved = noticia.saved
+                val nuevaNoticia = noticia.copy(saved = !isSaved)
+                onSaveClicked(nuevaNoticia)
+                // Actualizar la UI localmente sin recargar la lista completa
                 if (!isSaved) {
-                    imageButton.setImageResource(R.drawable.bookmark)
-                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.blue))
+                    setImageResource(R.drawable.bookmark)
+                    setColorFilter(ContextCompat.getColor(context, R.color.blue))
                 } else {
-                    imageButton.setImageResource(R.drawable.bookmark_outline)
-                    imageButton.setColorFilter(ContextCompat.getColor(context, R.color.gray))
+                    setImageResource(R.drawable.bookmark_outline)
+                    setColorFilter(ContextCompat.getColor(context, R.color.gray))
                 }
+                // No es necesario llamar a notifyItemChanged aquí porque LiveData actualizará la lista
             }
         }
     }
 
-    override fun getItemCount() = newsList.size
+    override fun getItemCount(): Int {
+        return newsList.size
+    }
+
+    fun actualizarLista(nuevaLista: List<NoticiaEntity>) {
+        newsList = nuevaLista
+        notifyDataSetChanged()
+    }
 }

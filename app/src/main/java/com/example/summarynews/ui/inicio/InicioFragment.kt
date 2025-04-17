@@ -119,6 +119,8 @@ class InicioFragment : Fragment() {
         _binding = null
     }
 
+    // Aquí se acualiza la lista y se maneja el texto cuando no hay noticias, se pasa la
+    // lista al adaptador para que la actualice
     private fun filtrarYActualizarLista(lista: List<NoticiaEntity>) {
         val noticiasFiltradas = if (categoriaActual == "Todas") {
             lista
@@ -132,6 +134,7 @@ class InicioFragment : Fragment() {
         adaptador.actualizarLista(noticiasFiltradas)
     }
 
+    // Aquí se filtra la lista por la categoría seleccionada
     fun filtrarPorCategoriaDesdeActivity(categoria: String) {
         categoriaActual = categoria
         noticiasViewModel.noticias.value?.let { lista ->

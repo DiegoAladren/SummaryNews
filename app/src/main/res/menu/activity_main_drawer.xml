@@ -6,15 +6,21 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/home"
+            android:icon="@drawable/home_outline"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_liked"
-            android:icon="@drawable/heart"
+            android:icon="@drawable/heart_outline"
             android:title="@string/menu_liked" />
         <item
             android:id="@+id/nav_saved"
-            android:icon="@drawable/bookmark"
+            android:icon="@drawable/bookmark_outline"
             android:title="@string/menu_saved" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout"
+            android:iconTint="@color/red"
+            android:title="Cerrar sesión"
+            />
     </group>
 </menu>

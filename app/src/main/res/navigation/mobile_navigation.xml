@@ -22,4 +22,30 @@
         android:name="com.example.summarynews.ui.guardados.GuardadosFragment"
         android:label="@string/menu_saved"
         tools:layout="@layout/fragment_guardados" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.summarynews.ui.registro.LoginFragment"
+        android:label="Iniciar Sesión">
+        <action
+            android:id="@+id/action_loginFragment_to_registroFragment"
+            app:destination="@id/registroFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_inicioFragment"
+            app:destination="@id/nav_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registroFragment"
+        android:name="com.example.summarynews.ui.registro.RegistroFragment"
+        android:label="Registro">
+        <action
+            android:id="@+id/action_registroFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registroFragment_to_inicioFragment"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_inicioFragment"
+        app:destination="@id/nav_home" />
 </navigation>

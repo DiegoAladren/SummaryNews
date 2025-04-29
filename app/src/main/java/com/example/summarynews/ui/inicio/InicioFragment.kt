@@ -1,5 +1,6 @@
 package com.example.summarynews.ui.inicio
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.example.summarynews.databinding.FragmentInicioBinding
 import com.example.summarynews.db.NoticiaEntity
 import com.example.summarynews.ui.noticias.AdaptadorNoticias
 import com.example.summarynews.ui.noticias.NoticiasViewModel
+import com.example.summarynews.ui.noticias.NoticiasViewModelFactory
 import kotlinx.coroutines.launch
 
 class InicioFragment : Fragment() {
@@ -21,11 +23,11 @@ class InicioFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adaptador: AdaptadorNoticias
-    private lateinit var noticiasViewModel: NoticiasViewModel
+    private var noticiasViewModel: NoticiasViewModel? = null // Cambiado a nullable e inicializado a null
 
     private var categoriaActual = "Todas"
+    private var currentUserId: Int? = null
 
-    // Se crea el fragment de inicio
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,14 +39,34 @@ class InicioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Se inicializa el view model para acceder a la base de datos
-        noticiasViewModel = ViewModelProvider(requireActivity())[NoticiasViewModel::class.java]
+        val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", Context.MODE_PRIVATE)
+        val emailGuardado = sharedPref.getString("email", null)
 
-        // Cargar noticias iniciales solo si no hay ninguna en la base de datos
+        emailGuardado?.let { email ->
+            lifecycleScope.launch {
+                val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", Context.MODE_PRIVATE)
+                val userId = sharedPref.getInt("userId", -1)
+                if (userId != -1) {
+                    currentUserId = userId
+                    noticiasViewModel = ViewModelProvider(
+                        requireActivity(),
+                        NoticiasViewModelFactory(requireActivity().application, userId)
+                    )[NoticiasViewModel::class.java]
+                    setupRecyclerView()
+                    observeNoticias()
+                    cargarNoticiasIniciales(userId)
+                }
+            }
+        }
+    }
+
+    private fun cargarNoticiasIniciales(userId: Int) {
         lifecycleScope.launch {
-            if (noticiasViewModel.noticiasLength() == 0) {
+            val count = noticiasViewModel?.noticiasLength() ?: 0
+            if (count == 0) {
                 val noticiasIniciales = listOf(
                     NoticiaEntity(
+                        userId = userId,
                         titulo = "Transmitir electricidad sin cables ya no es ciencia ficción",
                         resumen = "Transmitir electricidad sin cables parecía cosa de ciencia ficción o, como mucho, " +
                                 "una locura de Nikola Tesla en pleno 1901, que imaginó un sistema capaz de " +
@@ -56,6 +78,7 @@ class InicioFragment : Fragment() {
                         saved = false
                     ),
                     NoticiaEntity(
+                        userId = userId,
                         titulo = "La previsible derrota de Trump y cómo aprovecharla",
                         resumen = "Apple desarrolla en China " +
                                 "alrededor del 90% de su producción total, afirma The New York Times. Hacer un " +
@@ -68,6 +91,7 @@ class InicioFragment : Fragment() {
                         saved = false
                     ),
                     NoticiaEntity(
+                        userId = userId,
                         titulo = "EE.UU. e Irán mantienen un diálogo en busca de un nuevo acuerdo nuclear",
                         resumen = "Desde dos salas separadas en Mascate, la capital de Omán, el enviado especial " +
                                 "de Donald Trump, Steve Witkoff, y el ministro de Exteriores iraní, Abás " +
@@ -80,6 +104,7 @@ class InicioFragment : Fragment() {
                         saved = false
                     ),
                     NoticiaEntity(
+                        userId = userId,
                         titulo = "La herramienta fitness con la que trabajar brazos",
                         resumen = "Una buena esterilla deportiva, unas mancuernas ajustables o hasta una barra de dominadas " +
                                 "sin tornillos son grandes aliados para que nuestra casa se convierta en un " +
@@ -90,26 +115,28 @@ class InicioFragment : Fragment() {
                         liked = false,
                         saved = false
                     )
-                )
-                noticiasViewModel.insertarNoticias(noticiasIniciales)
+                ) // Tus noticias
+                noticiasViewModel?.insertarNoticias(noticiasIniciales)
             }
         }
+    }
 
-        // Inicializar el adaptador aquí, antes de observar el LiveData
+    private fun setupRecyclerView() {
         adaptador = AdaptadorNoticias(
-            emptyList(), // Inicializar con una lista vacía
+            emptyList(),
             onLikeClicked = { noticia ->
-                noticiasViewModel.actualizarNoticia(noticia)
+                noticiasViewModel?.actualizarNoticia(noticia)
             },
             onSaveClicked = { noticia ->
-                noticiasViewModel.actualizarNoticia(noticia)
+                noticiasViewModel?.actualizarNoticia(noticia)
             }
         )
         binding.newsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.newsRecyclerView.adapter = adaptador
+    }
 
-        // Observamos cambios en las noticias desde la base de datos
-        noticiasViewModel.noticias.observe(viewLifecycleOwner) { lista ->
+    private fun observeNoticias() {
+        noticiasViewModel?.noticias?.observe(viewLifecycleOwner) { lista ->
             filtrarYActualizarLista(lista)
         }
     }
@@ -119,8 +146,13 @@ class InicioFragment : Fragment() {
         _binding = null
     }
 
-    // Aquí se acualiza la lista y se maneja el texto cuando no hay noticias, se pasa la
-    // lista al adaptador para que la actualice
+    fun filtrarPorCategoriaDesdeActivity(categoria: String) {
+        categoriaActual = categoria
+        noticiasViewModel?.noticias?.value?.let { lista ->
+            filtrarYActualizarLista(lista)
+        }
+    }
+
     private fun filtrarYActualizarLista(lista: List<NoticiaEntity>) {
         val noticiasFiltradas = if (categoriaActual == "Todas") {
             lista
@@ -132,13 +164,5 @@ class InicioFragment : Fragment() {
             if (noticiasFiltradas.isEmpty()) View.VISIBLE else View.GONE
 
         adaptador.actualizarLista(noticiasFiltradas)
-    }
-
-    // Aquí se filtra la lista por la categoría seleccionada
-    fun filtrarPorCategoriaDesdeActivity(categoria: String) {
-        categoriaActual = categoria
-        noticiasViewModel.noticias.value?.let { lista ->
-            filtrarYActualizarLista(lista)
-        }
     }
 }

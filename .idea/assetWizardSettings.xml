@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="heart" />
-                            <entry key="sourceFile" value="C:\Users\User\AndroidStudioProjects\SummaryNews\app\src\main\res\drawable\heart.svg" />
+                            <entry key="outputName" value="logout" />
+                            <entry key="sourceFile" value="C:\Users\User\Downloads\logout.svg" />
                           </map>
                         </option>
                       </PersistentState>

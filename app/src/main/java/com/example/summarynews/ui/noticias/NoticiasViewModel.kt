@@ -9,33 +9,40 @@ import com.example.summarynews.db.AppDatabase
 import com.example.summarynews.db.NoticiaEntity
 import kotlinx.coroutines.launch
 
-class NoticiasViewModel (application: Application) : AndroidViewModel(application) {
+class NoticiasViewModel(application: Application, private val userId: Int) : AndroidViewModel(application) {
 
-    // Instancia del dao para acceder a la base de datos
     private val dao = AppDatabase.getDatabase(application).noticiaDao()
 
-
-    // LiveData que observa automáticamente los datos desde la base de datos
-    val noticias: LiveData<List<NoticiaEntity>> = liveData {
-        emitSource(dao.getTodasLive()) // Este método tiene que devolver LiveData desde el DAO
+    init {
+        // Verificación importante
+        if (userId <= 0) {
+            throw IllegalArgumentException("ID de usuario inválido: $userId")
+        }
     }
 
+    val noticias: LiveData<List<NoticiaEntity>> = dao.getNoticiasPorUsuario(userId)
+
+    // Noticias guardadas filtradas por userId
     val guardadas: LiveData<List<NoticiaEntity>> = liveData {
-        emitSource(dao.getGuardadasLive()) // Este también
+        emitSource(dao.getGuardadasPorUsuario(userId))
     }
 
-    // Insertar noticias en la base de datos (por ejemplo tras obtenerlas desde la API)
     fun insertarNoticias(noticias: List<NoticiaEntity>) = viewModelScope.launch {
-        dao.insertarNoticias(noticias)
+        // Forzar el userId correcto en todas las noticias
+        val noticiasConUsuario = noticias.map {
+            it.copy(userId = userId)
+        }
+        dao.insertarNoticias(noticiasConUsuario)
     }
 
-    // Actualizar una noticia (por ejemplo cuando el usuario da "guardar" o "like")
     fun actualizarNoticia(noticia: NoticiaEntity) = viewModelScope.launch {
-        dao.actualizarNoticia(noticia)
+        // Verificar que la noticia pertenece al usuario actual
+        if (noticia.userId == userId) {
+            dao.actualizarNoticia(noticia)
+        }
     }
 
-    // Obtener el número de noticias actuales (forma suspendida)
     suspend fun noticiasLength(): Int {
-        return dao.contarNoticias()
+        return dao.contarNoticiasPorUsuario(userId)
     }
 }

@@ -1,6 +1,5 @@
 package com.example.summarynews
 
-import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.view.Menu
@@ -21,9 +20,6 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.example.summarynews.ui.registro.LoginViewModel
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.ViewModelProvider
-import com.example.summarynews.ui.noticias.NoticiasViewModel
-import com.example.summarynews.ui.noticias.NoticiasViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,8 +30,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: androidx.navigation.NavController
     private lateinit var tabLayout: TabLayout
     private val loginViewModel: LoginViewModel by viewModels()
-    private var currentUserId: Int? = null
-    private lateinit var noticiasViewModel: NoticiasViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,12 +83,6 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.nav_home) {
-                // Obtener el userId solo cuando estamos en el fragmento principal
-                currentUserId?.let { userId ->
-                    noticiasViewModel =
-                        ViewModelProvider(this, NoticiasViewModelFactory(application, userId))[NoticiasViewModel::class.java]
-                    setupTabLayout()
-                }
                 tabLayout.visibility = View.VISIBLE
                 binding.appBarMain.fab.visibility = View.VISIBLE
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
@@ -112,27 +100,20 @@ class MainActivity : AppCompatActivity() {
 
         loginViewModel.navigateToInicio.observe(this, Observer { shouldNavigate ->
             if (shouldNavigate) {
-                obtenerIdUsuarioActual() // Obtener el ID después del login/registro
                 navController.navigate(R.id.action_global_inicioFragment)
                 loginViewModel.resetNavigateToInicio()
             }
         })
     }
 
-    private fun obtenerIdUsuarioActual() {
-        val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
-        currentUserId = sharedPref.getInt("userId", -1).takeIf { it != -1 }
-    }
-
     private fun verificarSesionInicial() {
         val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
-        val userId = sharedPref.getInt("userId", -1)
+        val emailGuardado = sharedPref.getString("email", null)
 
-        if (userId == -1) {
+        if (emailGuardado == null) {
             navController.navigate(R.id.loginFragment)
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         } else {
-            currentUserId = userId
             navController.navigate(R.id.action_global_inicioFragment)
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         }
@@ -140,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun cerrarSesion() {
         // Eliminar la información de la sesión de SharedPreferences
-        val sharedPref = getSharedPreferences("SesionUsuario", Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
         with(sharedPref.edit()) {
             remove("email")
             apply()
@@ -151,7 +132,6 @@ class MainActivity : AppCompatActivity() {
 
         // Bloquear el DrawerLayout ya que no hay sesión activa
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        currentUserId = null // Resetear el userId al cerrar sesión
     }
 
     private fun setupTabLayout() {
@@ -204,19 +184,5 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
-    }
-}
-
-// Factory para el NoticiasViewModel que requiere un parámetro
-class NoticiasViewModelFactory(
-    private val application: Application,
-    private val userId: Int
-) : ViewModelProvider.Factory {
-    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(NoticiasViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return NoticiasViewModel(application, userId) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

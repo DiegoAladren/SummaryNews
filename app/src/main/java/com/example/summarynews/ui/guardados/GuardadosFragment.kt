@@ -1,9 +1,11 @@
 package com.example.summarynews.ui.guardados
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,11 +19,16 @@ class GuardadosFragment : Fragment() {
     private lateinit var noticiasViewModel: NoticiasViewModel
     private lateinit var adaptador: AdaptadorNoticias
 
+    private var usuarioIdActual: Int = -1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentGuardadosBinding.inflate(inflater, container, false)
+        val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
+        usuarioIdActual = sharedPref.getInt("userId", -1) // -1 como valor por defecto si no se encuentra
+        Log.i("InicioFragment", "ID de usuario actual: $usuarioIdActual")
         return binding.root
     }
 
@@ -52,7 +59,7 @@ class GuardadosFragment : Fragment() {
 
     private fun cargarNoticiasGuardadas() {
         noticiasViewModel.noticias.observe(viewLifecycleOwner) { listaNoticias ->
-            val noticiasGuardadas = listaNoticias.filter { it.saved }
+            val noticiasGuardadas = listaNoticias.filter { it.saved && it.usuarioId == usuarioIdActual }
 
             binding.textoSinNoticiasG.visibility =
                 if (noticiasGuardadas.isEmpty()) View.VISIBLE else View.GONE

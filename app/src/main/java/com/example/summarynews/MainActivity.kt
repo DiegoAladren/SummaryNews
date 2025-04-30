@@ -1,12 +1,13 @@
 package com.example.summarynews
 
-import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -20,6 +21,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.example.summarynews.ui.registro.LoginViewModel
 import androidx.core.view.GravityCompat
+import androidx.navigation.findNavController
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: androidx.navigation.NavController
     private lateinit var tabLayout: TabLayout
     private val loginViewModel: LoginViewModel by viewModels()
+    private lateinit var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,20 +67,12 @@ class MainActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_home -> {
-                    navController.navigate(R.id.nav_home)
-                }
-                R.id.nav_liked -> {
-                    navController.navigate(R.id.nav_liked)
-                }
-                R.id.nav_saved -> {
-                    navController.navigate(R.id.nav_saved)
-                }
-                R.id.nav_logout -> {
-                    cerrarSesion()
-                }
+                R.id.nav_home -> navController.navigate(R.id.nav_home)
+                R.id.nav_liked -> navController.navigate(R.id.nav_liked)
+                R.id.nav_saved -> navController.navigate(R.id.nav_saved)
+                R.id.nav_logout -> cerrarSesion()
             }
-            drawerLayout.closeDrawer(GravityCompat.START) // Cerrar el drawer después de seleccionar un ítem
+            drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
 
@@ -87,6 +82,20 @@ class MainActivity : AppCompatActivity() {
                 binding.appBarMain.fab.visibility = View.VISIBLE
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 setupTabLayout()
+
+                // Seleccionar por defecto el tab "Todas"
+                val tabTodas = (0 until tabLayout.tabCount)
+                    .map { tabLayout.getTabAt(it) }
+                    .firstOrNull { it?.text == "Todas" }
+                tabTodas?.select()
+
+                // Forzar filtrado por categoría "Todas"
+                val currentFragment = supportFragmentManager
+                    .primaryNavigationFragment?.childFragmentManager?.primaryNavigationFragment
+                if (currentFragment is InicioFragment) {
+                    currentFragment.filtrarPorCategoriaDesdeActivity("Todas")
+                }
+
             } else {
                 tabLayout.visibility = View.GONE
                 binding.appBarMain.fab.visibility = View.GONE
@@ -100,10 +109,34 @@ class MainActivity : AppCompatActivity() {
 
         loginViewModel.navigateToInicio.observe(this, Observer { shouldNavigate ->
             if (shouldNavigate) {
+                // Ya no llamamos a actualizarHeaderNavigation aquí, el listener lo hará
                 navController.navigate(R.id.action_global_inicioFragment)
                 loginViewModel.resetNavigateToInicio()
             }
         })
+
+        // Inicializamos el listener para SharedPreferences
+        preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == "nombreUsuario" || key == "email") {
+                actualizarHeaderNavigation()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
+        // Registramos el listener para escuchar los cambios
+        sharedPref.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+        // Llamamos a actualizar al iniciar la actividad para mostrar los datos iniciales si hay sesión
+        actualizarHeaderNavigation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
+        // Desregistramos el listener para evitar fugas de memoria
+        sharedPref.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
     private fun verificarSesionInicial() {
@@ -114,23 +147,36 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.loginFragment)
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         } else {
+            // La actualización inicial se hará en onResume
             navController.navigate(R.id.action_global_inicioFragment)
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         }
     }
 
+    private fun actualizarHeaderNavigation() {
+        val headerView = binding.navView.getHeaderView(0)
+        val nombreUsuarioTextView: TextView = headerView.findViewById(R.id.nombreUsuario)
+        val correoUsuarioTextView: TextView = headerView.findViewById(R.id.emailUsuario)
+
+        val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
+        val nombreUsuario = sharedPref.getString("nombreUsuario", "")
+        val correoUsuario = sharedPref.getString("email", "")
+
+        nombreUsuarioTextView.text = nombreUsuario
+        correoUsuarioTextView.text = correoUsuario
+        Log.i("ACTUALIZAR_HEADER", "Recuperado: Email=$correoUsuario, Nombre=$nombreUsuario")
+    }
+
     private fun cerrarSesion() {
-        // Eliminar la información de la sesión de SharedPreferences
         val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
         with(sharedPref.edit()) {
+            Log.i("MainActivity", "Cerrando sesión del usuario")
             remove("email")
+            remove("nombreUsuario") // Asegúrate de eliminar también el nombre
             apply()
         }
-
-        // Navegar de vuelta al LoginFragment
+        // La actualización se hará automáticamente por el listener al eliminar las preferencias
         navController.navigate(R.id.loginFragment)
-
-        // Bloquear el DrawerLayout ya que no hay sesión activa
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 

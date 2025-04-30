@@ -79,11 +79,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun resetNavigateToInicio() {
         _navigateToInicio.value = false
     }
-
-    // Método explícito para establecer la navegación (opcional)
-    fun setNavigateToInicio(shouldNavigate: Boolean) {
-        _navigateToInicio.value = shouldNavigate
-    }
 }
 
 sealed class LoginResult {

@@ -14,11 +14,11 @@ class NoticiasViewModel(application: Application) : AndroidViewModel(application
     private val dao = AppDatabase.getDatabase(application).noticiaDao()
 
 
-    val noticias: LiveData<List<NoticiaEntity>> = dao.getNoticiasPorUsuario()
+    val noticias: LiveData<List<NoticiaEntity>> = dao.getNoticias()
 
     // Noticias guardadas filtradas por userId
     val guardadas: LiveData<List<NoticiaEntity>> = liveData {
-        emitSource(dao.getGuardadasPorUsuario())
+        emitSource(dao.getGuardadasLive())
     }
 
     fun insertarNoticias(noticias: List<NoticiaEntity>) = viewModelScope.launch {
@@ -31,7 +31,7 @@ class NoticiasViewModel(application: Application) : AndroidViewModel(application
         dao.actualizarNoticia(noticia)
     }
 
-    suspend fun noticiasLength(): Int {
-        return dao.contarNoticiasPorUsuario()
+    suspend fun noticiasLength(usuarioId: Int): Int {
+        return dao.contarNoticiasPorUsuario(usuarioId)
     }
 }

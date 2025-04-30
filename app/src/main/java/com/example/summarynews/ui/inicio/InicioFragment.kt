@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,7 @@ class InicioFragment : Fragment() {
     private lateinit var noticiasViewModel: NoticiasViewModel
 
     private var categoriaActual = "Todas"
+    private var usuarioIdActual: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +34,10 @@ class InicioFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentInicioBinding.inflate(inflater, container, false)
+        // Recuperar el ID del usuario al crear la vista
+        val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
+        usuarioIdActual = sharedPref.getInt("userId", -1) // -1 como valor por defecto si no se encuentra
+        Log.i("InicioFragment", "ID de usuario actual: $usuarioIdActual")
         return binding.root
     }
 
@@ -42,7 +48,7 @@ class InicioFragment : Fragment() {
         noticiasViewModel = ViewModelProvider(requireActivity())[NoticiasViewModel::class.java]
 
         lifecycleScope.launch {
-            if (noticiasViewModel.noticiasLength() == 0) {
+            if (noticiasViewModel.noticiasLength(usuarioIdActual) == 0) {
                 val noticiasIniciales = listOf(
                     NoticiaEntity(
                         titulo = "Transmitir electricidad sin cables ya no es ciencia ficción",
@@ -53,7 +59,8 @@ class InicioFragment : Fragment() {
                         fuenteURL = "https://example.com",
                         categoria = "Tecnología",
                         liked = false,
-                        saved = false
+                        saved = false,
+                        usuarioId = usuarioIdActual
                     ),
                     NoticiaEntity(
                         titulo = "La previsible derrota de Trump y cómo aprovecharla",
@@ -64,7 +71,8 @@ class InicioFragment : Fragment() {
                         fuenteURL = "https://example.com",
                         categoria = "Deportes",
                         liked = false,
-                        saved = false
+                        saved = false,
+                        usuarioId = usuarioIdActual
                     ),
                     NoticiaEntity(
                         titulo = "EE.UU. e Irán mantienen un diálogo en busca de un nuevo acuerdo nuclear",
@@ -76,7 +84,8 @@ class InicioFragment : Fragment() {
                         fuenteURL = "https://example.com",
                         categoria = "Política",
                         liked = false,
-                        saved = false
+                        saved = false,
+                        usuarioId = usuarioIdActual
                     ),
                     NoticiaEntity(
                         titulo = "La herramienta fitness con la que trabajar brazos",
@@ -86,7 +95,8 @@ class InicioFragment : Fragment() {
                         fuenteURL = "https://example.com",
                         categoria = "Salud",
                         liked = false,
-                        saved = false
+                        saved = false,
+                        usuarioId = usuarioIdActual
                     )
                 )
                 noticiasViewModel.insertarNoticias(noticiasIniciales)
@@ -117,22 +127,25 @@ class InicioFragment : Fragment() {
     }
 
     private fun filtrarYActualizarLista(lista: List<NoticiaEntity>) {
-        val noticiasFiltradas = if (categoriaActual == "Todas") {
+        val noticiasFiltradasPorCategoria = if (categoriaActual == "Todas") {
             lista
         } else {
             lista.filter { it.categoria == categoriaActual }
         }
 
-        binding.textoSinNoticias.visibility =
-            if (noticiasFiltradas.isEmpty()) View.VISIBLE else View.GONE
+        // Ahora filtra también por el ID de usuario
+        val noticiasFiltradasFinal = noticiasFiltradasPorCategoria.filter { it.usuarioId == usuarioIdActual }
 
-        adaptador.actualizarLista(noticiasFiltradas)
+        binding.textoSinNoticias.visibility =
+            if (noticiasFiltradasFinal.isEmpty()) View.VISIBLE else View.GONE
+
+        adaptador.actualizarLista(noticiasFiltradasFinal)
     }
 
     fun filtrarPorCategoriaDesdeActivity(categoria: String) {
         categoriaActual = categoria
-        noticiasViewModel.noticias.value?.let { lista ->
-            filtrarYActualizarLista(lista)
+        if (::noticiasViewModel.isInitialized && noticiasViewModel.noticias.value != null) {
+            filtrarYActualizarLista(noticiasViewModel.noticias.value!!)
         }
     }
 }

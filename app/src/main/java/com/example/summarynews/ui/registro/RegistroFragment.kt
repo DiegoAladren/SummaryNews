@@ -2,6 +2,7 @@ package com.example.summarynews.ui.registro
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -83,8 +84,10 @@ class RegistroFragment : Fragment() {
         val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             putString("email", usuario.email)
-            putInt("userId", usuario.id) // Asegúrate de guardar el ID
+            putInt("userId", usuario.id)
+            putString("nombreUsuario", usuario.nombre)
             apply()
         }
+        Log.i("GUARDAR_SESION", "Guardado: Email=${usuario.email}, Nombre=${usuario.nombre}, ID=${usuario.id}")
     }
 }

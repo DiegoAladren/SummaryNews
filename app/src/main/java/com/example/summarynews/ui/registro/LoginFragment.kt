@@ -72,13 +72,14 @@ class LoginFragment : Fragment() {
         })
     }
 
-    private fun guardarSesion(usuario: UsuarioEntity) {  // Cambia el parámetro a UsuarioEntity
-        Log.i("LoginFragment", "Guardando sesión para el usuario (paso yo antes): ${usuario.email}")
+    private fun guardarSesion(usuario: UsuarioEntity) {
         val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             putString("email", usuario.email)
-            putInt("userId", usuario.id)  // Guarda el ID del usuario
+            putInt("userId", usuario.id)
+            putString("nombreUsuario", usuario.nombre)
             apply()
         }
+        Log.i("GUARDAR_SESION", "Guardado: Email=${usuario.email}, Nombre=${usuario.nombre}, ID=${usuario.id}")
     }
 }

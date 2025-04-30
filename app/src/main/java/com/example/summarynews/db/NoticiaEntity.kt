@@ -1,7 +1,6 @@
 package com.example.summarynews.db
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -16,4 +15,5 @@ data class NoticiaEntity(
     val categoria: String,
     var liked: Boolean,
     var saved: Boolean,
+    val usuarioId: Int
 )

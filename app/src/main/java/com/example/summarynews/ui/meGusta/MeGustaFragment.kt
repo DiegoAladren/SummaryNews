@@ -1,9 +1,11 @@
 package com.example.summarynews.ui.meGusta
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,11 +18,16 @@ class MeGustaFragment : Fragment() {
     private lateinit var noticiasViewModel: NoticiasViewModel
     private lateinit var adaptador: LikesPorCategoriaAdapter
 
+    private var usuarioIdActual: Int = -1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMegustaBinding.inflate(inflater, container, false)
+        val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", AppCompatActivity.MODE_PRIVATE)
+        usuarioIdActual = sharedPref.getInt("userId", -1) // -1 como valor por defecto si no se encuentra
+        Log.i("InicioFragment", "ID de usuario actual: $usuarioIdActual")
         return binding.root
     }
 
@@ -38,7 +45,7 @@ class MeGustaFragment : Fragment() {
 
     private fun observarEstadisticas() {
         noticiasViewModel.noticias.observe(viewLifecycleOwner) { listaNoticias ->
-            val noticiasLikes = listaNoticias.filter { it.liked }
+            val noticiasLikes = listaNoticias.filter { it.liked && it.usuarioId == usuarioIdActual }
 
             // Calcular el total de likes
             val totalLikes = noticiasLikes.size

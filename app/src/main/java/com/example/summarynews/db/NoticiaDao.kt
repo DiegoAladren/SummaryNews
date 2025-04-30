@@ -27,6 +27,9 @@ interface NoticiaDao {
     @Query("SELECT COUNT(*) FROM noticias ")
     suspend fun contarNoticias(): Int
 
+    @Query("SELECT COUNT(*) FROM noticias WHERE usuarioId = :usuarioId")
+    suspend fun contarNoticiasPorUsuario(usuarioId: Int): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarNoticias(noticias: List<NoticiaEntity>)
 
@@ -34,11 +37,8 @@ interface NoticiaDao {
     suspend fun actualizarNoticia(noticia: NoticiaEntity)
 
     @Query("SELECT * FROM noticias ")
-    fun getNoticiasPorUsuario(): LiveData<List<NoticiaEntity>>
+    fun getNoticias(): LiveData<List<NoticiaEntity>>
 
-    @Query("SELECT * FROM noticias WHERE saved = 1")
-    fun getGuardadasPorUsuario(): LiveData<List<NoticiaEntity>>
 
-    @Query("SELECT COUNT(*) FROM noticias ")
-    suspend fun contarNoticiasPorUsuario(): Int
+
 }

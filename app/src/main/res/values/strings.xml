@@ -22,5 +22,17 @@
     <string name="categoria_mas_likeada_ninguna">Categoría que más te gusta: Ninguna</string>
     <string name="categoria_menos_likeada_formateado">Categoría menos te gusta: %1$s (%2$d likes)</string>
     <string name="categoria_menos_likeada_ninguna">Categoría menos te gusta: Ninguna</string>
+    <string name="inicia_sesi_n_en_summary_news">Inicia Sesión en Summary News</string>
+    <string name="todo">TODO</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="no_tienes_usuario_registrate">¿No tienes usuario? Regístrate</string>
+    <string name="m_vil_o_correo_electr_nico">Móvil o correo electrónico</string>
+    <string name="reg_strate_para_empezar_a_ver_noticias">Regístrate para empezar a ver noticias</string>
+    <string name="nombre_de_usuario">Nombre de Usuario</string>
+    <string name="registrate">Regístrate</string>
+    <string name="ya_tienes_usuario_inicia_sesi_n">¿Ya tienes usuario? Inicia sesión</string>
+    <string name="categoria">Categoría</string>
+    <string name="_5_likes">5 likes</string>
 
 </resources>

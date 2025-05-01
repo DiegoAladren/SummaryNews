@@ -22,6 +22,7 @@ import androidx.lifecycle.Observer
 import com.example.summarynews.ui.registro.LoginViewModel
 import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
+import com.example.summarynews.ui.noticias.NoticiasViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
     private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener
+    private val noticiasViewModel: NoticiasViewModel by viewModels() // Obtiene una instancia del ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,10 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Se han cargado noticias nuevas.", Snackbar.LENGTH_LONG)
+            val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
+            val idUsuario = sharedPref.getInt("userId", -1)
+            noticiasViewModel.cargarNuevasNoticias("us", idUsuario) // Llama a la función del ViewModel
+            Snackbar.make(view, "Cargando nuevas noticias...", Snackbar.LENGTH_SHORT) // Muestra un mensaje de carga
                 .setAction("Action", null)
                 .setAnchorView(R.id.fab).show()
         }

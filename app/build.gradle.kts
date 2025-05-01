@@ -54,13 +54,16 @@ dependencies {
     implementation (libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
-    // Retrofit + converter JSON
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.logging.interceptor)
     // Coroutines para Retrofit
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation (libs.kotlinx.coroutines.android.v160)
     // Coil (o Glide) para cargar imágenes desde URL
-    implementation ("io.coil-kt:coil:2.0.0")
+    implementation (libs.coil)
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
 
     implementation (libs.kotlinx.coroutines.android)
 

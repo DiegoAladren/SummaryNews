@@ -39,6 +39,4 @@ interface NoticiaDao {
     @Query("SELECT * FROM noticias ")
     fun getNoticias(): LiveData<List<NoticiaEntity>>
 
-
-
 }

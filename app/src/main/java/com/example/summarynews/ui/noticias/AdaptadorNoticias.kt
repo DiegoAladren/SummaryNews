@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.summarynews.R
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.example.summarynews.db.NoticiaEntity
 
 class AdaptadorNoticias(
@@ -34,7 +35,15 @@ class AdaptadorNoticias(
         val noticia = newsList[position]
         holder.titulo.text = noticia.titulo
         holder.resumen.text = noticia.resumen
-        holder.imagen.setImageResource(noticia.imagenID)
+        if (!noticia.imagenURL.isNullOrEmpty()) {
+            Glide.with(holder.itemView.context)
+                .load(noticia.imagenURL)
+                .placeholder(R.drawable.noticia1imagen) // Imagen de carga
+                .error(R.drawable.noticia2imagen) // Imagen de error si falla la carga
+                .into(holder.imagen)
+        } else {
+            holder.imagen.setImageResource(noticia.imagenID)
+        }
 
         val context = holder.itemView.context
 

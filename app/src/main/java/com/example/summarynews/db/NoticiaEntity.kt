@@ -11,6 +11,7 @@ data class NoticiaEntity(
     val titulo: String,
     val resumen: String,
     val imagenID: Int,
+    val imagenURL: String?,
     val fuenteURL: String,
     val categoria: String,
     var liked: Boolean,

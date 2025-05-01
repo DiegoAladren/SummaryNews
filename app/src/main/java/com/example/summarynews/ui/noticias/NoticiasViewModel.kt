@@ -1,37 +1,70 @@
 package com.example.summarynews.ui.noticias
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.summarynews.api.NewsRepository
+import com.example.summarynews.api.Resource
 import com.example.summarynews.db.AppDatabase
 import com.example.summarynews.db.NoticiaEntity
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class NoticiasViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val dao = AppDatabase.getDatabase(application).noticiaDao()
+    private val repository = NewsRepository(AppDatabase.getDatabase(application))
+    private val _headlines = MutableLiveData<Resource<List<NoticiaEntity>>>()
+    val headlines: LiveData<Resource<List<NoticiaEntity>>> = _headlines
+
+    val guardadas: LiveData<List<NoticiaEntity>> = repository.getSavedNews()
+    val todasLasNoticiasLocal: LiveData<List<NoticiaEntity>> = repository.getAllNews()
+    val noticias: LiveData<List<NoticiaEntity>> = repository.getAllNews()
+
+    private var pagina = 1
 
 
-    val noticias: LiveData<List<NoticiaEntity>> = dao.getNoticias()
-
-    // Noticias guardadas filtradas por userId
-    val guardadas: LiveData<List<NoticiaEntity>> = liveData {
-        emitSource(dao.getGuardadasLive())
+    // Función para cargar noticias (se llamará desde el botón flotante)
+    fun cargarNuevasNoticias(countryCode: String, idUsuario: Int) {
+        Log.d("NoticiasViewModel", "Cargando nuevas noticias desde la API (botón)")
+        _headlines.value = Resource.Loading() // Indica que la carga ha comenzado
+        viewModelScope.launch {
+            repository.getHeadlines(countryCode, pagina, idUsuario).collectLatest { response ->
+                _headlines.value = response
+                if (response is Resource.Success) {
+                    pagina++ // Incrementa la página para la próxima carga
+                }
+            }
+        }
     }
 
-    fun insertarNoticias(noticias: List<NoticiaEntity>) = viewModelScope.launch {
+    fun getHeadlines(countryCode: String, idUsuario: Int) {
+        viewModelScope.launch {
+            repository.getHeadlines(countryCode, 1, idUsuario).collectLatest { response ->
+                _headlines.value = response
+            }
+        }
+    }
 
-        dao.insertarNoticias(noticias)
+    fun searchNews(query: String) {
+        viewModelScope.launch {
+            repository.searchNews(query, 1).collectLatest { response ->
+                _headlines.value = response // Podrías tener un LiveData separado para los resultados de búsqueda
+            }
+        }
     }
 
     fun actualizarNoticia(noticia: NoticiaEntity) = viewModelScope.launch {
-        // Verificar que la noticia pertenece al usuario actual
-        dao.actualizarNoticia(noticia)
+        repository.updateNews(noticia)
+    }
+
+    fun eliminarNoticia(noticia: NoticiaEntity) = viewModelScope.launch {
+        repository.deleteNews(noticia)
     }
 
     suspend fun noticiasLength(usuarioId: Int): Int {
-        return dao.contarNoticiasPorUsuario(usuarioId)
+        return AppDatabase.getDatabase(getApplication()).noticiaDao().contarNoticiasPorUsuario(usuarioId)
     }
 }

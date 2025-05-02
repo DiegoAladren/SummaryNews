@@ -29,7 +29,7 @@
             android:layout_marginTop="4dp"
             android:fontFamily="@font/open_sans"
             android:paddingTop="8dp"
-            android:text="La previsible derrota de Trump y cómo aprovecharla"
+            android:text="La previsible derrota de Trump y cómo aprovecharla como aprovecharla si."
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"

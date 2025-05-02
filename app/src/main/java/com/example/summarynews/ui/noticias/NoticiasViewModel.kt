@@ -6,8 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.summarynews.api.NewsRepository
-import com.example.summarynews.api.Resource
+import com.example.summarynews.newsAPI.NewsRepository
+import com.example.summarynews.newsAPI.Resource
 import com.example.summarynews.db.AppDatabase
 import com.example.summarynews.db.NoticiaEntity
 import kotlinx.coroutines.flow.collectLatest
@@ -26,19 +26,24 @@ class NoticiasViewModel(application: Application) : AndroidViewModel(application
     private var pagina = 1
 
 
-    // Función para cargar noticias (se llamará desde el botón flotante)
-    fun cargarNuevasNoticias(countryCode: String, idUsuario: Int) {
+    fun cargarNuevasNoticias(countryCode: String, idUsuario: Int, onComplete: () -> Unit) {
         Log.d("NoticiasViewModel", "Cargando nuevas noticias desde la API (botón)")
-        _headlines.value = Resource.Loading() // Indica que la carga ha comenzado
+        _headlines.value = Resource.Loading()
+
         viewModelScope.launch {
             repository.getHeadlines(countryCode, pagina, idUsuario).collectLatest { response ->
                 _headlines.value = response
                 if (response is Resource.Success) {
-                    pagina++ // Incrementa la página para la próxima carga
+                    pagina++
+                    onComplete()
+                } else if (response is Resource.Error) {
+                    onComplete()
                 }
+                // No llamamos a onComplete() si es Resource.Loading
             }
         }
     }
+
 
     fun getHeadlines(countryCode: String, idUsuario: Int) {
         viewModelScope.launch {

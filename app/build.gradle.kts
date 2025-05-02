@@ -64,6 +64,14 @@ dependencies {
     implementation (libs.coil)
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.logging.interceptor.v4100)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation(libs.kotlinx.coroutines.android)
+    implementation("org.json:json:20231013") // Para parsear el JSON de la respuesta
 
     implementation (libs.kotlinx.coroutines.android)
 

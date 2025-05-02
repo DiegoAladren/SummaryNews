@@ -51,14 +51,35 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment_content_main) as androidx.navigation.fragment.NavHostFragment
         navController = navHostFragment.navController
 
+        var estaCargando = false
+
         binding.appBarMain.fab.setOnClickListener { view ->
             val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
             val idUsuario = sharedPref.getInt("userId", -1)
-            noticiasViewModel.cargarNuevasNoticias("us", idUsuario) // Llama a la función del ViewModel
-            Snackbar.make(view, "Cargando nuevas noticias...", Snackbar.LENGTH_SHORT) // Muestra un mensaje de carga
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+
+            if (estaCargando) return@setOnClickListener // Salir si ya está en carga
+
+            estaCargando = true
+            Log.i("MainActivity", "Cargando nuevas noticias desde el FAB"+estaCargando)
+            binding.appBarMain.fab.isEnabled = false
+            val snackbarCargando = Snackbar.make(view, "Cargando nuevas noticias...", Snackbar.LENGTH_INDEFINITE)
+                .setAnchorView(R.id.fab)
+            snackbarCargando.show()
+
+            noticiasViewModel.cargarNuevasNoticias("us", idUsuario) {
+                estaCargando = false
+                Log.i("MainActivity", "Noticias cargadas correctamente"+estaCargando)
+                binding.appBarMain.fab.isEnabled = true
+                snackbarCargando.dismiss()
+
+                Snackbar.make(view, "Noticias cargadas correctamente", Snackbar.LENGTH_SHORT)
+                    .setAnchorView(R.id.fab)
+                    .show()
+            }
+
         }
+
+
 
         verificarSesionInicial()
 

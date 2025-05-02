@@ -1,5 +1,7 @@
 package com.example.summarynews.ui.noticias
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +13,12 @@ import com.example.summarynews.R
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.summarynews.db.NoticiaEntity
+import androidx.core.net.toUri
 
 class AdaptadorNoticias(
     private var newsList: List<NoticiaEntity>,
     private val onLikeClicked: (NoticiaEntity) -> Unit,
-    private val onSaveClicked: (NoticiaEntity) -> Unit
+    private val onSaveClicked: (NoticiaEntity) -> Unit,
 ) : RecyclerView.Adapter<AdaptadorNoticias.NoticiasViewHolder>() {
 
     class NoticiasViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -38,14 +41,22 @@ class AdaptadorNoticias(
         if (!noticia.imagenURL.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(noticia.imagenURL)
-                .placeholder(R.drawable.noticia1imagen) // Imagen de carga
-                .error(R.drawable.noticia2imagen) // Imagen de error si falla la carga
+                .placeholder(R.drawable.placeholder_image) // Imagen de carga
+                .error(R.drawable.placeholder_image) // Imagen de error si falla la carga
                 .into(holder.imagen)
         } else {
             holder.imagen.setImageResource(noticia.imagenID)
         }
 
         val context = holder.itemView.context
+
+        val tvLink: TextView = holder.itemView.findViewById(R.id.tvLink)
+        tvLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = noticia.fuenteURL.toUri()
+            }
+            context.startActivity(intent)
+        }
 
         // Configurar el estado inicial del botón de Like
         holder.btnLike.apply {

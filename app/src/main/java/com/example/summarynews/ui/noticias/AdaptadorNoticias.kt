@@ -1,7 +1,6 @@
 package com.example.summarynews.ui.noticias
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +37,7 @@ class AdaptadorNoticias(
         val noticia = newsList[position]
         holder.titulo.text = noticia.titulo
         holder.resumen.text = noticia.resumen
+        // Cargar la imagen
         if (!noticia.imagenURL.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(noticia.imagenURL)
@@ -49,7 +49,7 @@ class AdaptadorNoticias(
         }
 
         val context = holder.itemView.context
-
+        // Enlace a la noticia original
         val tvLink: TextView = holder.itemView.findViewById(R.id.tvLink)
         tvLink.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW).apply {

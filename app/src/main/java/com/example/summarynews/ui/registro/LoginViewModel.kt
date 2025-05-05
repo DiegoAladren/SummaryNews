@@ -13,6 +13,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val usuarioDao = AppDatabase.getDatabase(application).usuarioDao()
 
+    // Las variables con _ delante son privadas y mutables, las variables sin _ son públicas y solo de lectura
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 

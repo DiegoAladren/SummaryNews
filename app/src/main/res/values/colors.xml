@@ -15,6 +15,7 @@
     <color name="card_background">#FFFFFFFF</color>
     <color name="dark_AppBar">#282828</color>
     <color name="white_header">#FFFFFF</color>
+    <color name="gray_bottom">#E0E0E0</color>
 
 
     <color  name="text_color_Dark">#EFEEEE</color>

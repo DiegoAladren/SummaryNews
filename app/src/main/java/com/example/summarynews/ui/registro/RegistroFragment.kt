@@ -42,11 +42,28 @@ class RegistroFragment : Fragment() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            if (nombre.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
-                viewModel.insertarUsuario(nombre, email, password)
-            } else {
+            if (nombre.isBlank() || email.isBlank() || password.isBlank()) {
                 Toast.makeText(requireContext(), "Por favor, rellena todos los campos.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            if (nombre.length < 6) {
+                Toast.makeText(requireContext(), "El nombre debe tener al menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
+            if (!email.matches(emailRegex)) {
+                Toast.makeText(requireContext(), "Introduce un correo electrónico válido.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (password.length < 6) {
+                Toast.makeText(requireContext(), "La contraseña debe tener al menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            viewModel.insertarUsuario(nombre, email, password)
         }
 
         logInButton.setOnClickListener {

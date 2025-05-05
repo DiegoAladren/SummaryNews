@@ -46,7 +46,7 @@ class GuardadosFragment : Fragment() {
             onSaveClicked = { noticia ->
                 noticiasViewModel.actualizarNoticia(noticia)
                 // Solo recargar la lista cuando se guarda o se quita de guardados para que
-                // se elimine la noticia si le quitas de guardados
+                // se elimine la noticia si la quitas de guardados
                 cargarNoticiasGuardadas()
             }
         )

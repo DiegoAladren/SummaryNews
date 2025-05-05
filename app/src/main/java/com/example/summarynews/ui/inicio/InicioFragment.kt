@@ -55,7 +55,7 @@ class InicioFragment : Fragment() {
         binding.newsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.newsRecyclerView.adapter = adaptador
 
-        // Observa todas las noticias locales
+        // Observa todas las noticias
         noticiasViewModel.todasLasNoticiasLocal.observe(viewLifecycleOwner) { lista ->
             val noticiasFiltradasPorUsuario = lista.filter { it.usuarioId == usuarioIdActual }
             filtrarYActualizarLista(noticiasFiltradasPorUsuario)

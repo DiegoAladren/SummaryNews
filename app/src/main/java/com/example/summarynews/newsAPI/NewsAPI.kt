@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface NewsAPI {
-
+    // Principales noticias de diferentes categorías
     @GET("v2/top-headlines")
     suspend fun getHeadlines(
         @Query("country")
@@ -17,6 +17,7 @@ interface NewsAPI {
         apiKey: String = API_KEY
     ): Response<NewsResponse>
 
+    // Cualquier noticia
     @GET("v2/everything")
     suspend fun searchForNews(
         @Query("q")

@@ -17,7 +17,6 @@ class NoticiasViewModel(application: Application) : AndroidViewModel(application
 
     private val repository = NewsRepository(AppDatabase.getDatabase(application))
     private val _headlines = MutableLiveData<Resource<List<NoticiaEntity>>>()
-    val headlines: LiveData<Resource<List<NoticiaEntity>>> = _headlines
 
     val guardadas: LiveData<List<NoticiaEntity>> = repository.getSavedNews()
     val todasLasNoticiasLocal: LiveData<List<NoticiaEntity>> = repository.getAllNews()
@@ -39,27 +38,11 @@ class NoticiasViewModel(application: Application) : AndroidViewModel(application
                 } else if (response is Resource.Error) {
                     onComplete()
                 }
-                // No llamamos a onComplete() si es Resource.Loading
+                // No llama a onComplete() si es Resource.Loading para que se siga mostrando el mensaje de carga
             }
         }
     }
 
-
-    fun getHeadlines(countryCode: String, idUsuario: Int) {
-        viewModelScope.launch {
-            repository.getHeadlines(countryCode, 1, idUsuario).collectLatest { response ->
-                _headlines.value = response
-            }
-        }
-    }
-
-    fun searchNews(query: String) {
-        viewModelScope.launch {
-            repository.searchNews(query, 1).collectLatest { response ->
-                _headlines.value = response // Podrías tener un LiveData separado para los resultados de búsqueda
-            }
-        }
-    }
 
     fun actualizarNoticia(noticia: NoticiaEntity) = viewModelScope.launch {
         repository.updateNews(noticia)

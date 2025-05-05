@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         var estaCargando = false
 
+        // Configurando el botón flotante que carga noticias al pulsarlo.
         binding.appBarMain.fab.setOnClickListener { view ->
             val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
             val idUsuario = sharedPref.getInt("userId", -1)
@@ -115,7 +116,7 @@ class MainActivity : AppCompatActivity() {
                     .firstOrNull { it?.text == "Todas" }
                 tabTodas?.select()
 
-                // Forzar filtrado por categoría "Todas"
+                // Forzar filtrado por categoría "Todas" cuando entras a InicioFragment
                 val currentFragment = supportFragmentManager
                     .primaryNavigationFragment?.childFragmentManager?.primaryNavigationFragment
                 if (currentFragment is InicioFragment) {
@@ -165,6 +166,8 @@ class MainActivity : AppCompatActivity() {
         sharedPref.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
+    // Si ya habías iniciado sesión no hace falta volver a hacerlo aunque cierres la aplicación
+    // hasta que cierres sesión voluntariamente desde el menú.
     private fun verificarSesionInicial() {
         val sharedPref = getSharedPreferences("SesionUsuario", MODE_PRIVATE)
         val emailGuardado = sharedPref.getString("email", null)
@@ -188,6 +191,7 @@ class MainActivity : AppCompatActivity() {
         val nombreUsuario = sharedPref.getString("nombreUsuario", "")
         val correoUsuario = sharedPref.getString("email", "")
 
+        // Para que se vea tu usuario y correo en el header del menú desplegable
         nombreUsuarioTextView.text = nombreUsuario
         correoUsuarioTextView.text = correoUsuario
         Log.i("ACTUALIZAR_HEADER", "Recuperado: Email=$correoUsuario, Nombre=$nombreUsuario")
@@ -198,7 +202,7 @@ class MainActivity : AppCompatActivity() {
         with(sharedPref.edit()) {
             Log.i("MainActivity", "Cerrando sesión del usuario")
             remove("email")
-            remove("nombreUsuario") // Asegúrate de eliminar también el nombre
+            remove("nombreUsuario")
             apply()
         }
         // La actualización se hará automáticamente por el listener al eliminar las preferencias
@@ -206,6 +210,7 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
+    // Configuración del TabLayout para mostrar las categorías
     private fun setupTabLayout() {
         if (tabLayout.tabCount == 0) {
             val categorias = listOf("Todas", "Política", "Deportes", "Tecnología", "Salud", "Economía", "Ciencia", "Cultura", "Opinión")
@@ -233,6 +238,8 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    // Estas dos funciones sirven para evitar que el botón de retroceso te
+    // lleve a la pantalla de inicio sin haber iniciado sesión.
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return when (navController.currentDestination?.id) {

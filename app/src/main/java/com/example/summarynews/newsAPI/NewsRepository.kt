@@ -21,6 +21,7 @@ class NewsRepository(db: AppDatabase) {
     private val newsAPI = RetrofitInstance.api
     private val noticiaDao = db.noticiaDao()
 
+    //Cargar flujo con noticias de la API
     fun getHeadlines(countryCode: String, pageNumber: Int, idUsuario: Int): Flow<Resource<List<NoticiaEntity>>> = flow {
         emit(Resource.Loading())
         try {
@@ -37,7 +38,7 @@ class NewsRepository(db: AppDatabase) {
                                 NoticiaEntity(
                                     titulo = titulo,
                                     resumen = resumen,
-                                    imagenID = R.drawable.noticia1imagen,
+                                    imagenID = R.drawable.placeholder_image,
                                     imagenURL = article.urlToImage,
                                     fuenteURL = article.url.toString(),
                                     categoria = categoria,
@@ -62,41 +63,11 @@ class NewsRepository(db: AppDatabase) {
         }
     }.flowOn(Dispatchers.IO)
 
-    fun searchNews(searchQuery: String, pageNumber: Int): Flow<Resource<List<NoticiaEntity>>> = flow {
-        emit(Resource.Loading())
-        try {
-            val response = newsAPI.searchForNews(searchQuery = searchQuery, pageNumber = pageNumber)
-            if (response.isSuccessful) {
-                response.body()?.let { newsResponse ->
-                    val noticiasEntity = newsResponse.articles.map { article ->
-                        NoticiaEntity(
-                            titulo = article.title.toString(),
-                            resumen = article.description.toString(),
-                            imagenID = R.drawable.placeholder_image,
-                            imagenURL = article.urlToImage,
-                            fuenteURL = article.url.toString(),
-                            categoria = "", // Se podría intentar inferir la categoría de la búsqueda
-                            liked = false,
-                            saved = false,
-                            usuarioId = 1
-                        )
-                    }
-                    noticiaDao.insertarNoticias(noticiasEntity) // Guarda las noticias en la base de datos
-                    emit(Resource.Success(noticiasEntity))
-                }
-            } else {
-                emit(Resource.Error(response.message()))
-            }
-        } catch (e: Exception) {
-            emit(Resource.Error("Error de red o conversión de datos"))
-        }
-    }.flowOn(Dispatchers.IO)
 
-
-    // Función para obtener todas las noticias guardadas localmente
+    // Función para obtener todas las noticias guardadas
     fun getSavedNews(): LiveData<List<NoticiaEntity>> = noticiaDao.getGuardadasLive()
 
-    // Función para actualizar una noticia (liked, saved, etc.)
+    // Función para actualizar una noticia
     suspend fun updateNews(noticia: NoticiaEntity) {
         noticiaDao.actualizarNoticia(noticia)
     }
@@ -109,11 +80,12 @@ class NewsRepository(db: AppDatabase) {
     // Función para obtener todas las noticias de la base de datos (LiveData)
     fun getAllNews(): LiveData<List<NoticiaEntity>> = noticiaDao.getTodasLive()
 
-    // Nueva función para verificar si hay noticias en la base de datos
+    // Nueva función para comprobar si hay noticias en la base de datos
     suspend fun isNewsDatabaseEmpty(): Boolean {
         return noticiaDao.contarNoticias() == 0
     }
 
+    // Gemini devuelve un JSON con el titular y la descripción resumidos y traducidos además de añadir la categoría.
     suspend fun procesarArticuloGemini(titulo: String?, descripcion: String?): Triple<String, String, String> {
         val prompt = """
         Título: ${titulo ?: ""}

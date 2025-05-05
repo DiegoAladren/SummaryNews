@@ -70,7 +70,7 @@ class MeGustaFragment : Fragment() {
             binding.categoriaMenosLikes.text = if (categoriaMenosLikes != null) {
                 "Categoría que menos te gusta: ${categoriaMenosLikes.first} (${categoriaMenosLikes.second} likes)"
             } else {
-                "Categoría menos te gusta: Ninguna"
+                "Categoría que menos te gusta: Ninguna"
             }
 
             // Actualizar el RecyclerView de likes por categoría

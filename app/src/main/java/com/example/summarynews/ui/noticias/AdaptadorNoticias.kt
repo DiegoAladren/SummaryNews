@@ -117,7 +117,7 @@ class AdaptadorNoticias(
     }
 
     fun actualizarLista(nuevaLista: List<NoticiaEntity>) {
-        newsList = nuevaLista
+        newsList = nuevaLista.reversed()
         notifyDataSetChanged()
     }
 }

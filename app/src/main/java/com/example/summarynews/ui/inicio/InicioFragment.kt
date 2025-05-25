@@ -69,8 +69,10 @@ class InicioFragment : Fragment() {
 
     private fun filtrarYActualizarLista(lista: List<NoticiaEntity>) {
         val noticiasFiltradasPorCategoria = if (categoriaActual == "Todas") {
+            binding.textoSinNoticias.text = "No hay noticias ahora mismo, pulsa el botón flotante para cargarlas"
             lista
         } else {
+            binding.textoSinNoticias.text = "No hay noticias de esta categoría"
             lista.filter { it.categoria == categoriaActual }
         }
 

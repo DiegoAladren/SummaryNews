@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
@@ -18,6 +19,7 @@ import com.example.summarynews.databinding.ActivityMainBinding
 import com.example.summarynews.ui.inicio.InicioFragment
 import com.google.android.material.tabs.TabLayout
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import com.example.summarynews.ui.registro.LoginViewModel
 import androidx.core.view.GravityCompat
@@ -34,9 +36,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
     private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener
-    private val noticiasViewModel: NoticiasViewModel by viewModels() // Obtiene una instancia del ViewModel
+    private val noticiasViewModel: NoticiasViewModel by viewModels()
+
+    private val PREF_APP_SETTINGS = "AjustesAppSummaryNews"
+    private val PREF_KEY_DARK_MODE = "dark_mode_enabled"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Aplicar el tema guardado ANTES de super.onCreate y setContentView
+        val appSettingsPrefs = getSharedPreferences(PREF_APP_SETTINGS, MODE_PRIVATE)
+        val isDarkModeEnabled = appSettingsPrefs.getBoolean(PREF_KEY_DARK_MODE, isSystemInDarkMode())
+        applyAppTheme(isDarkModeEnabled)
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -79,10 +89,12 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
-
-
-        verificarSesionInicial()
+        // Solo comprueba la sesión inicial y navega si la actividad se crea por primera vez
+        // (savedInstanceState es null). Si no es null, el estado de navegación se restaurará
+        // automáticamente por el NavController.
+        if (savedInstanceState == null) {
+            verificarSesionInicial()
+        }
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -126,17 +138,17 @@ class MainActivity : AppCompatActivity() {
             } else {
                 tabLayout.visibility = View.GONE
                 binding.appBarMain.fab.visibility = View.GONE
-                if (destination.id == R.id.loginFragment || destination.id == R.id.registroFragment) {
+                if (destination.id == R.id.loginFragment || destination.id == R.id.registroFragment || destination.id == R.id.nav_ajustes) {
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 } else {
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
             }
+            invalidateOptionsMenu()
         }
 
         loginViewModel.navigateToInicio.observe(this, Observer { shouldNavigate ->
             if (shouldNavigate) {
-                // Ya no llamamos a actualizarHeaderNavigation aquí, el listener lo hará
                 navController.navigate(R.id.action_global_inicioFragment)
                 loginViewModel.resetNavigateToInicio()
             }
@@ -148,6 +160,35 @@ class MainActivity : AppCompatActivity() {
                 actualizarHeaderNavigation()
             }
         }
+    }
+
+    private fun applyAppTheme(isDarkMode: Boolean) {
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
+    private fun isSystemInDarkMode(): Boolean {
+        val nightModeFlags = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+        return nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                navController.navigate(R.id.action_global_to_ajustesFragment)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val isEnAjustes = navController.currentDestination?.id == R.id.nav_ajustes
+        menu.findItem(R.id.action_settings)?.isVisible = !isEnAjustes
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onResume() {

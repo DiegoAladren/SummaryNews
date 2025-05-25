@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Ajustes"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/textViewAjustesTitulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/ajustes_de_la_aplicacion"
+        android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/apariencia"
+        android:layout_width="352dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/border_bottom"
+        android:text="@string/apariencia"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo" />
+
+    <ImageView
+        android:id="@+id/icono_modo_oscuro"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="120dp"
+        android:contentDescription="@string/modo_oscuro"
+        android:src="@drawable/ic_dark_mode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo"
+        app:tint="@color/black" />
+
+    <TextView
+        android:id="@+id/modo_oscuro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="120dp"
+        android:layout_weight="1"
+        android:text="@string/modo_oscuro"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/icono_modo_oscuro"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchModoOscuro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="108dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo" />
+
+    <ImageView
+        android:id="@+id/icono_automatico"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="188dp"
+        android:contentDescription="@string/modo_oscuro"
+        android:src="@drawable/ic_auto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo"
+        app:tint="@color/black" />
+
+    <TextView
+        android:id="@+id/auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="188dp"
+        android:text="@string/automatico_usar_tema_del_sistema"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/icono_automatico"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo" />
+
+    <CheckBox
+        android:id="@+id/checkboxModoAutomatico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icono_modo_oscuro" />
+
+    <TextView
+        android:id="@+id/notificaciones"
+        android:layout_width="352dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="256dp"
+        android:background="@drawable/border_bottom"
+        android:text="@string/notificaciones"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo" />
+
+    <ImageView
+        android:id="@+id/icono_notificaciones"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="336dp"
+        android:contentDescription="@string/modo_oscuro"
+        android:src="@drawable/ic_bell_ring"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo"
+        app:tint="@color/black" />
+
+    <TextView
+        android:id="@+id/permitir_notificaciones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="336dp"
+        android:text="@string/permitir_notificaciones"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/icono_notificaciones"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo" />
+
+    <CheckBox
+        android:id="@+id/checkboxNotificaciones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icono_modo_oscuro" />
+
+    <TextView
+        android:id="@+id/idioma"
+        android:layout_width="352dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="416dp"
+        android:background="@drawable/border_bottom"
+        android:text="@string/idioma_y_region"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAjustesTitulo" />
+
+    <Spinner
+        android:id="@+id/spinnerOpciones"
+        android:layout_width="349dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="4dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idioma" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,5 +34,19 @@
     <string name="ya_tienes_usuario_inicia_sesi_n">¿Ya tienes usuario? Inicia sesión</string>
     <string name="categoria">Categoría</string>
     <string name="_5_likes">5 likes</string>
+    <string name="titulo_ajustes">Ajustes</string>
+    <string name="modo_oscuro">Modo Oscuro</string>
+    <string name="descripcion_icono_ajustes">Icono de la pantalla de ajustes</string>
+    <string name="ajustes_de_la_aplicacion">Ajustes de la Aplicación</string>
+    <string name="configura_tu_experiencia">Configura tu experiencia</string>
+    <string name="apariencia">Apariencia</string>
+    <string name="automatico_usar_tema_del_sistema">Automático (usar tema del sistema)</string>
+    <string name="idioma_y_region">Idioma y región</string>
+    <string name="notificaciones">Notificaciones</string>
+    <string name="permitir_notificaciones">Permitir notificaciones</string>
+    <string-array name="opciones_spinner">
+        <item>Español</item>
+        <item>Inglés</item>
+    </string-array>
 
 </resources>

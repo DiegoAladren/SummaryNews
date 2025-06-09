@@ -16,6 +16,13 @@ import androidx.navigation.fragment.findNavController
 import com.example.summarynews.R
 import com.example.summarynews.db.UsuarioEntity
 
+/**
+ * [Fragment] encargado de la interfaz de usuario para el registro de nuevos usuarios.
+ *
+ * Este fragmento permite a los usuarios introducir un nombre, correo electrónico y contraseña
+ * para crear una nueva cuenta. Realiza validaciones básicas de los campos de entrada
+ * y se comunica con un [LoginViewModel] para gestionar la lógica de registro y la navegación.
+ */
 class RegistroFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
@@ -25,6 +32,18 @@ class RegistroFragment : Fragment() {
     private lateinit var registerButton: Button
     private lateinit var logInButton: Button
 
+    /**
+     * Es llamado para que el fragmento instancie su jerarquía de vistas.
+     *
+     * Infla el layout `fragment_registro.xml`, obtiene las referencias a los elementos de la UI
+     * y configura los listeners para los botones de registro y de "ir a Login".
+     * También incluye validaciones de los campos de entrada antes de intentar el registro.
+     *
+     * @param inflater El [LayoutInflater] que puede usarse para inflar cualquier vista en el fragmento.
+     * @param container Si no es nulo, esta es la vista padre a la que se debe adjuntar la UI del fragmento.
+     * @param savedInstanceState Si no es nulo, este fragmento está siendo reconstruido a partir de un estado guardado previamente.
+     * @return La [View] para la UI del fragmento.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,6 +92,16 @@ class RegistroFragment : Fragment() {
         return view
     }
 
+    /**
+     * Es llamado inmediatamente después de que [onCreateView] haya devuelto un valor,
+     * pero antes de que cualquier estado guardado haya sido restaurado en la vista.
+     *
+     * Observa los resultados del registro ([LoginResult]) y los eventos de navegación
+     * desde el [LoginViewModel].
+     *
+     * @param view La [View] devuelta por [onCreateView].
+     * @param savedInstanceState Si no es nulo, este fragmento está siendo reconstruido a partir de un estado guardado previamente.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -97,6 +126,13 @@ class RegistroFragment : Fragment() {
         })
     }
 
+    /**
+     * Guarda la información del usuario en SharedPreferences para mantener la sesión.
+     *
+     * Almacena el email, el ID de usuario y el nombre del usuario recién registrado.
+     *
+     * @param usuario La [UsuarioEntity] que contiene los datos del usuario registrado.
+     */
     private fun guardarSesion(usuario: UsuarioEntity) {
         val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {

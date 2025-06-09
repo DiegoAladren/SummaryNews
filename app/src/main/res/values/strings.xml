@@ -12,7 +12,9 @@
     <string name="guardar">Guardar</string>
     <string name="me_gusta">Me gusta</string>
     <string name="enlace_fuente_original">Enlace fuente original</string>
-    <string name="no_hay_noticias">No hay noticias para esta categoría</string>
+    <string name="no_hay_noticias">No hay noticias disponibles en este momento. Pulsa el botón flotante para cargarlas.
+    Ten en cuenta que el proceso puede tardar alrededor de 20 segundos.</string>
+    <string name="no_hay_noticias_categoria">No hay noticias para esta categoría</string>
     <string name="no_hay_noticias_guardadas">No hay noticias guardadas</string>
     <string name="resumen_general">Resumen General</string>
     <string name="titulo_estadisticas">Aquí aparecerán estadísticas sobre tus Likes</string>

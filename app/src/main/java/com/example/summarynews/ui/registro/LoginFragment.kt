@@ -16,6 +16,13 @@ import androidx.navigation.fragment.findNavController
 import com.example.summarynews.R
 import com.example.summarynews.db.UsuarioEntity
 
+/**
+ * [Fragment] encargado de la interfaz de usuario para el inicio de sesión.
+ *
+ * Este fragmento permite a los usuarios introducir sus credenciales (correo electrónico y contraseña)
+ * para iniciar sesión. Interactúa con un [LoginViewModel]
+ * para manejar la lógica de autenticación y la navegación.
+ */
 class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
@@ -24,6 +31,17 @@ class LoginFragment : Fragment() {
     private lateinit var loginButton: Button
     private lateinit var registerButton: Button
 
+    /**
+     * Es llamado para que el fragmento instancie su jerarquía de vistas.
+     *
+     * Infla el layout `fragment_login.xml` y obtiene las referencias a los elementos de la UI.
+     * También configura los listeners para los botones de inicio de sesión y registro.
+     *
+     * @param inflater El [LayoutInflater] que puede usarse para inflar cualquier vista en el fragmento.
+     * @param container Si no es nulo, esta es la vista padre a la que se debe adjuntar la UI del fragmento.
+     * @param savedInstanceState Si no es nulo, este fragmento está siendo reconstruido a partir de un estado guardado previamente.
+     * @return La [View] para la UI del fragmento.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +66,16 @@ class LoginFragment : Fragment() {
         return view
     }
 
+    /**
+     * Es llamado inmediatamente después de que [onCreateView] haya devuelto un valor,
+     * pero antes de que cualquier estado guardado haya sido restaurado en la vista.
+     *
+     * Observa los resultados del inicio de sesión ([LoginResult]) y los eventos de navegación
+     * desde el [LoginViewModel].
+     *
+     * @param view La [View] devuelta por [onCreateView].
+     * @param savedInstanceState Si no es nulo, este fragmento está siendo reconstruido a partir de un estado guardado previamente.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,6 +100,13 @@ class LoginFragment : Fragment() {
         })
     }
 
+    /**
+     * Guarda la información del usuario en SharedPreferences para mantener la sesión.
+     *
+     * Almacena el email, el ID de usuario y el nombre del usuario logueado.
+     *
+     * @param usuario La [UsuarioEntity] que contiene los datos del usuario logueado.
+     */
     private fun guardarSesion(usuario: UsuarioEntity) {
         val sharedPref = requireActivity().getSharedPreferences("SesionUsuario", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {

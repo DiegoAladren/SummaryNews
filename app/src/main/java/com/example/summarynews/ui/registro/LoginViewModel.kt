@@ -9,6 +9,16 @@ import com.example.summarynews.db.AppDatabase
 import com.example.summarynews.db.UsuarioEntity
 import kotlinx.coroutines.launch
 
+/**
+ * [AndroidViewModel] que gestiona la lógica para las operaciones de inicio de sesión
+ * y registro de usuarios.
+ *
+ * Interactúa con la base de datos a través de UsuarioDao para autenticar y registrar usuarios.
+ * Proporciona [LiveData] para observar los resultados de estas operaciones ([loginResult])
+ * y para desencadenar la navegación a la pantalla de inicio ([navigateToInicio]).
+ *
+ * @param application La instancia de [Application] de la aplicación.
+ */
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val usuarioDao = AppDatabase.getDatabase(application).usuarioDao()
@@ -20,6 +30,16 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val _navigateToInicio = MutableLiveData<Boolean>()
     val navigateToInicio: LiveData<Boolean> = _navigateToInicio
 
+    /**
+     * Intenta iniciar sesión con las credenciales proporcionadas.
+     *
+     * Realiza validaciones básicas de los campos y luego lanza una corrutina
+     * para consultar la base de datos. Actualiza [_loginResult] con el éxito
+     * o el error de la operación y, en caso de éxito, establece [_navigateToInicio] en `true`.
+     *
+     * @param email El correo electrónico del usuario.
+     * @param password La contraseña del usuario.
+     */
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
             _loginResult.value = LoginResult.Error("Por favor, rellena todos los campos.")
@@ -43,6 +63,18 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * Intenta registrar un nuevo usuario con la información proporcionada.
+     *
+     * Realiza validaciones de los campos, comprueba si el correo electrónico ya existe
+     * en la base de datos y, si todo es válido, inserta el nuevo usuario.
+     * Actualiza [_loginResult] con el éxito o el error de la operación y, en caso de éxito,
+     * establece [_navigateToInicio] en `true`.
+     *
+     * @param nombre El nombre del nuevo usuario.
+     * @param email El correo electrónico del nuevo usuario.
+     * @param password La contraseña del nuevo usuario.
+     */
     fun insertarUsuario(nombre: String, email: String, password: String) {
         if (nombre.isBlank() || email.isBlank() || password.isBlank()) {
             _loginResult.value = LoginResult.Error("Por favor, rellena todos los campos para registrarte.")
@@ -77,11 +109,23 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * Restablece el estado de navegación a la pantalla de inicio.
+     *
+     * Esto asegura que el evento de navegación solo se desencadene una vez
+     * después de un inicio de sesión o registro exitoso.
+     */
     fun resetNavigateToInicio() {
         _navigateToInicio.value = false
     }
 }
 
+/**
+ * Clase `sealed` que representa el resultado de una operación de inicio de sesión o registro.
+ *
+ * Permite modelar explícitamente los posibles estados de una operación asíncrona:
+ * éxito con los datos del usuario o un error con un mensaje descriptivo.
+ */
 sealed class LoginResult {
     data class Success(val usuario: UsuarioEntity) : LoginResult()
     data class Error(val message: String) : LoginResult()
